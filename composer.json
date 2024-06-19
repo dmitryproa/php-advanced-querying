@@ -1,0 +1,20 @@
+{
+    "name": "dmitryproa/php-advanced-querying",
+    "description": "A PHP library for building and formatting complex SQL queries",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "DmitryProA\\PhpAdvancedQuerying\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Dmitry Promokhov",
+            "email": "dmitry.promokhov@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0"
+    }
+}

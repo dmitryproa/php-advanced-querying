@@ -1,0 +1,7 @@
+*.code-workspace
+/vendor/
+.php-cs-fixer.cache
+composer.lock
+.php-cs-fixer.php
+/.phpunit.cache/
+/test.php
