@@ -80,6 +80,10 @@ class HelpersTest extends TestCase
         $expected = new Table('test', 't');
         $this->assertEquals($expected, $table);
 
+        $table = table('tasks'); // Name contains 'as'
+        $expected = new Table('tasks');
+        $this->assertEquals($expected, $table);
+
         $table2 = table($table);
         $this->assertEquals($table, $table2);
 

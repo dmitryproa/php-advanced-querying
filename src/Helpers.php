@@ -37,7 +37,7 @@ function table($table, string $alias = '')
             $table = new Table($table, $alias);
 
             $tableRegex = REGEX_NAME;
-            if (preg_match("/^({$tableRegex})\\s*as\\s*({$tableRegex})$/i", str_replace('`', '', $table->name), $matches)) {
+            if (preg_match("/^({$tableRegex})\\s+as\\s+({$tableRegex})$/i", str_replace('`', '', $table->name), $matches)) {
                 $table->name = $matches[1];
                 $table->alias = $matches[2];
             }
