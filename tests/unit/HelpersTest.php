@@ -48,6 +48,7 @@ use function DmitryProA\PhpAdvancedQuerying\less;
 use function DmitryProA\PhpAdvancedQuerying\lessEquals;
 use function DmitryProA\PhpAdvancedQuerying\like;
 use function DmitryProA\PhpAdvancedQuerying\literal;
+use function DmitryProA\PhpAdvancedQuerying\literalOrExpr;
 use function DmitryProA\PhpAdvancedQuerying\literals;
 use function DmitryProA\PhpAdvancedQuerying\makeUpdateValue;
 use function DmitryProA\PhpAdvancedQuerying\makeUpdateValues;
@@ -153,6 +154,19 @@ class HelpersTest extends TestCase
 
         $this->expectException(InvalidTypeException::class);
         literals([]);
+    }
+
+    public function testLiteralOrExpr()
+    {
+        $expr = literalOrExpr('value');
+        $this->assertEquals(new LiteralExpression('value'), $expr);
+
+        $column = new ColumnExpression('col');
+        $expr = literalOrExpr($column);
+        $this->assertEquals($column, $expr);
+
+        $this->expectException(InvalidTypeException::class);
+        literalOrExpr([]);
     }
 
     public function testGroupconcat()
@@ -310,9 +324,13 @@ class HelpersTest extends TestCase
 
     public function testEq()
     {
-        $eq = eq('column', 1);
-        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression(1), CompareCondition::EQUALS);
-        $this->assertEquals($expected, $eq);
+        $expr = eq('column', 'string');
+        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression('string'), CompareCondition::EQUALS);
+        $this->assertEquals($expected, $expr);
+
+        $expr = eq('column', column('column2'));
+        $expected = new CompareCondition(new ColumnExpression('column'), new ColumnExpression('column2'), CompareCondition::EQUALS);
+        $this->assertEquals($expected, $expr);
 
         $this->expectException(InvalidTypeException::class);
         eq([], new stdClass());
@@ -320,9 +338,13 @@ class HelpersTest extends TestCase
 
     public function testGreater()
     {
-        $eq = greater('column', 1);
-        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression(1), CompareCondition::GREATER);
-        $this->assertEquals($expected, $eq);
+        $expr = greater('column', 'string');
+        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression('string'), CompareCondition::GREATER);
+        $this->assertEquals($expected, $expr);
+
+        $expr = greater('column', column('column2'));
+        $expected = new CompareCondition(new ColumnExpression('column'), new ColumnExpression('column2'), CompareCondition::GREATER);
+        $this->assertEquals($expected, $expr);
 
         $this->expectException(InvalidTypeException::class);
         greater([], new stdClass());
@@ -330,9 +352,13 @@ class HelpersTest extends TestCase
 
     public function testGreaterEquals()
     {
-        $eq = greaterEquals('column', 1);
-        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression(1), CompareCondition::GREATER_EQUALS);
-        $this->assertEquals($expected, $eq);
+        $expr = greaterEquals('column', 'string');
+        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression('string'), CompareCondition::GREATER_EQUALS);
+        $this->assertEquals($expected, $expr);
+
+        $expr = greaterEquals('column', column('column2'));
+        $expected = new CompareCondition(new ColumnExpression('column'), new ColumnExpression('column2'), CompareCondition::GREATER_EQUALS);
+        $this->assertEquals($expected, $expr);
 
         $this->expectException(InvalidTypeException::class);
         greaterEquals([], new stdClass());
@@ -340,9 +366,13 @@ class HelpersTest extends TestCase
 
     public function testLess()
     {
-        $eq = less('column', 1);
-        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression(1), CompareCondition::LESS);
-        $this->assertEquals($expected, $eq);
+        $expr = less('column', 'string');
+        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression('string'), CompareCondition::LESS);
+        $this->assertEquals($expected, $expr);
+
+        $expr = less('column', column('column2'));
+        $expected = new CompareCondition(new ColumnExpression('column'), new ColumnExpression('column2'), CompareCondition::LESS);
+        $this->assertEquals($expected, $expr);
 
         $this->expectException(InvalidTypeException::class);
         less([], new stdClass());
@@ -350,9 +380,13 @@ class HelpersTest extends TestCase
 
     public function testLessEquals()
     {
-        $eq = lessEquals('column', 1);
-        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression(1), CompareCondition::LESS_EQUALS);
-        $this->assertEquals($expected, $eq);
+        $expr = lessEquals('column', 'string');
+        $expected = new CompareCondition(new ColumnExpression('column'), new LiteralExpression('string'), CompareCondition::LESS_EQUALS);
+        $this->assertEquals($expected, $expr);
+
+        $expr = lessEquals('column', column('column2'));
+        $expected = new CompareCondition(new ColumnExpression('column'), new ColumnExpression('column2'), CompareCondition::LESS_EQUALS);
+        $this->assertEquals($expected, $expr);
 
         $this->expectException(InvalidTypeException::class);
         lessEquals([], new stdClass());
@@ -360,8 +394,12 @@ class HelpersTest extends TestCase
 
     public function testLike()
     {
-        $like = like('column', 1);
-        $expected = new LikeCondition(new ColumnExpression('column'), new LiteralExpression(1));
+        $like = like('column', 'string');
+        $expected = new LikeCondition(new ColumnExpression('column'), new LiteralExpression('string'));
+        $this->assertEquals($expected, $like);
+
+        $like = like('column', column('column2'));
+        $expected = new LikeCondition(new ColumnExpression('column'), new ColumnExpression('column2'));
         $this->assertEquals($expected, $like);
 
         $this->expectException(InvalidTypeException::class);
@@ -414,8 +452,8 @@ class HelpersTest extends TestCase
 
     public function testNotEq()
     {
-        $notEq = notEq('column', 1);
-        $expected = new NotCondition(new CompareCondition(new ColumnExpression('column'), new LiteralExpression(1), CompareCondition::EQUALS));
+        $notEq = notEq('column', 'string');
+        $expected = new NotCondition(eq('column', 'string'));
         $this->assertEquals($expected, $notEq);
 
         $this->expectException(InvalidTypeException::class);
@@ -424,8 +462,8 @@ class HelpersTest extends TestCase
 
     public function testNotLike()
     {
-        $notLike = notLike('column', 1);
-        $expected = new NotCondition(new LikeCondition(new ColumnExpression('column'), new LiteralExpression(1)));
+        $notLike = notLike('column', 'string');
+        $expected = new NotCondition(like('column', 'string'));
         $this->assertEquals($expected, $notLike);
 
         $this->expectException(InvalidTypeException::class);

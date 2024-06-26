@@ -33,6 +33,7 @@ use DmitryProA\PhpAdvancedQuerying\Statements\Update;
 use DmitryProA\PhpAdvancedQuerying\Table;
 use PHPUnit\Framework\TestCase;
 
+use function DmitryProA\PhpAdvancedQuerying\column;
 use function DmitryProA\PhpAdvancedQuerying\count_;
 use function DmitryProA\PhpAdvancedQuerying\func;
 use function DmitryProA\PhpAdvancedQuerying\greater;
@@ -165,7 +166,7 @@ class MysqlFormatterTest extends TestCase
 
     public function testConditionExpression()
     {
-        $expr = new ConditionExpression(greater('col1', 'col2'));
+        $expr = new ConditionExpression(greater('col1', column('col2')));
         $expected = $this->formatter->formatCondition($expr->condition);
         $sql = $this->formatter->formatExpression($expr);
         $this->assertSql($expected, $sql);
@@ -291,7 +292,7 @@ class MysqlFormatterTest extends TestCase
         $this->assertEquals($expectedParams, $params);
         $this->assertSql($expected.';', $sql);
 
-        $st->join('test3 as t3', Join::INNER)->eq('t.col', 't3.col')->end();
+        $st->join('test3 as t3', Join::INNER)->eq('t.col', column('t3.col'))->end();
         $st->join('test4 as t4')->eq('t4.sort', 1)->end();
         $expected .= ' INNER JOIN `test3` AS `t3` ON (`t`.`col` = `t3`.`col`) JOIN `test4` AS `t4` ON (`t4`.`sort` = :v2)';
         $expectedParams['v2'] = 1;
@@ -340,7 +341,7 @@ class MysqlFormatterTest extends TestCase
         $this->assertEquals($expectedParams, $params);
         $this->assertSql("UPDATE {$expectedTable} SET {$expectedColumns};", $sql);
 
-        $st->join('test2 as t2', Join::LEFT)->eq('t.id', 't2.id')->end();
+        $st->join('test2 as t2', Join::LEFT)->eq('t.id', column('t2.id'))->end();
         $expected = "UPDATE {$expectedTable} LEFT JOIN `test2` as `t2` ON (`t`.`id` = `t2`.`id`) SET {$expectedColumns}";
         $sql = $this->formatter->format($st, $params);
         $this->assertEquals($expectedParams, $params);

@@ -225,6 +225,7 @@ $statement->where()->...conditions...->end()
 
 ->true($expr) //-> $expr
 ->false($expr) //-> NOT $expr
+
 ->eq($expr1, $expr2) //-> $expr1 = $expr2
 ->notEq($expr1, $expr2) //-> $expr1 != $expr2
 ->greater($expr1, $expr2) //-> $expr1 > $expr2
@@ -233,6 +234,10 @@ $statement->where()->...conditions...->end()
 ->lessEquals($expr1, $expr2) //-> $expr1 <= $expr2
 ->like($expr1, $expr2) //-> $expr1 LIKE $expr2
 ->notLike($expr1, $expr2) //-> $expr1 NOT LIKE $expr2
+
+//!!! $expr2 is treated as literal, unless Expression is passed
+
+
 ->isNull($expr) //-> $expr IS NULL
 ->isNotNull($expr) //-> $expr IS NOT NULL
 ->in($expr, ...$literals) //-> $expr IN ($literal1, $literal2, ...)

@@ -97,6 +97,11 @@ function literal($value): LiteralExpression
     return ($value instanceof LiteralExpression) ? $value : new LiteralExpression($value);
 }
 
+function literalOrExpr($value): Expression
+{
+    return ($value instanceof Expression) ? $value : new LiteralExpression($value);
+}
+
 /** @return LiteralExpression[] */
 function literals(...$values): array
 {
@@ -212,32 +217,32 @@ function or_(...$conditions): OrCondition
 
 function eq($left, $right): CompareCondition
 {
-    return new CompareCondition(expr($left), expr($right), CompareCondition::EQUALS);
+    return new CompareCondition(expr($left), literalOrExpr($right), CompareCondition::EQUALS);
 }
 
 function greater($left, $right): CompareCondition
 {
-    return new CompareCondition(expr($left), expr($right), CompareCondition::GREATER);
+    return new CompareCondition(expr($left), literalOrExpr($right), CompareCondition::GREATER);
 }
 
 function greaterEquals($left, $right): CompareCondition
 {
-    return new CompareCondition(expr($left), expr($right), CompareCondition::GREATER_EQUALS);
+    return new CompareCondition(expr($left), literalOrExpr($right), CompareCondition::GREATER_EQUALS);
 }
 
 function less($left, $right): CompareCondition
 {
-    return new CompareCondition(expr($left), expr($right), CompareCondition::LESS);
+    return new CompareCondition(expr($left), literalOrExpr($right), CompareCondition::LESS);
 }
 
 function lessEquals($left, $right): CompareCondition
 {
-    return new CompareCondition(expr($left), expr($right), CompareCondition::LESS_EQUALS);
+    return new CompareCondition(expr($left), literalOrExpr($right), CompareCondition::LESS_EQUALS);
 }
 
 function like($left, $right): LikeCondition
 {
-    return new LikeCondition(expr($left), is_string($right) ? literal($right) : expr($right));
+    return new LikeCondition(expr($left), literalOrExpr($right));
 }
 
 function in($expr, ...$values): InCondition
