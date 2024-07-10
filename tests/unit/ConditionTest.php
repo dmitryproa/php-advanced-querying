@@ -17,6 +17,8 @@ use DmitryProA\PhpAdvancedQuerying\InvalidTypeException;
 use DmitryProA\PhpAdvancedQuerying\Statements\Select;
 use PHPUnit\Framework\TestCase;
 
+use function DmitryProA\PhpAdvancedQuerying\true;
+
 /**
  * @internal
  *
@@ -242,5 +244,10 @@ class ConditionTest extends TestCase
         $expected = new AndCondition($cond, new OrCondition($cond2, $cond3));
         $expected->setStatement($st);
         $this->assertEquals($expected, $new);
+
+        // Asset that condition returns self
+        $new = $cond->true($expr3);
+        $new2 = $new->true($expr4);
+        $this->assertEquals($new, $new2);
     }
 }
