@@ -207,6 +207,9 @@ count_(true, "column1", "column2") //-> COUNT(DISTINCT `column1`, `column2`)
 groupconcat($expression, $distinct = false, $separator = ",") //GROUP_CONCAT() function
 groupconcat("column") //-> GROUP_CONCAT(`column`)
 groupconcat("column", true, ";") //-> GROUP_CONCAT(DISTINCT `column` SEPARATOR :v1)
+
+cast($expression, $type) //CAST($expression AS $type)
+cast("column", CastExpression::SIGNED) //-> CAST(`column` AS SIGNED)
 ```
 
 <a name="block2.8"></a>
