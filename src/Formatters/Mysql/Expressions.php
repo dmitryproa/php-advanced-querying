@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DmitryProA\PhpAdvancedQuerying\Formatters\Mysql;
 
 use DmitryProA\PhpAdvancedQuerying\Expressions\ArithmeticExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\CastExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ColumnExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
@@ -23,6 +24,7 @@ trait Expressions
         FunctionExpression::class => 'formatFunctionExpression',
         GroupConcatExpression::class => 'formatGroupConcatExpression',
         CountExpression::class => 'formatCountExpression',
+        CastExpression::class => 'formatCastExpression',
         ArithmeticExpression::class => 'formatArithmeticExpression',
         ConditionExpression::class => 'formatConditionExpression',
     ];
@@ -93,6 +95,11 @@ trait Expressions
         $query .= $columns.')';
 
         return $query;
+    }
+
+    protected function formatCastExpression(CastExpression $expr): string
+    {
+        return 'CAST('.$this->formatExpression($expr->expr)." AS {$expr->type})";
     }
 
     protected function formatArithmeticExpression(ArithmeticExpression $expr): string

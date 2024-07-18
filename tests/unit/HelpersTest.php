@@ -12,6 +12,7 @@ use DmitryProA\PhpAdvancedQuerying\Conditions\NotCondition;
 use DmitryProA\PhpAdvancedQuerying\Conditions\NullCondition;
 use DmitryProA\PhpAdvancedQuerying\Conditions\OrCondition;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ArithmeticExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\CastExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ColumnExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
@@ -26,6 +27,7 @@ use DmitryProA\PhpAdvancedQuerying\Table;
 use PHPUnit\Framework\TestCase;
 
 use function DmitryProA\PhpAdvancedQuerying\and_;
+use function DmitryProA\PhpAdvancedQuerying\cast;
 use function DmitryProA\PhpAdvancedQuerying\checkArrayType;
 use function DmitryProA\PhpAdvancedQuerying\checkType;
 use function DmitryProA\PhpAdvancedQuerying\column;
@@ -187,6 +189,16 @@ class HelpersTest extends TestCase
 
         $this->expectException(InvalidTypeException::class);
         count_(false, []);
+    }
+
+    public function testCast()
+    {
+        $cast = cast('test', CastExpression::SIGNED);
+        $expected = new CastExpression(new ColumnExpression('test'), CastExpression::SIGNED);
+        $this->assertEquals($expected, $cast);
+
+        $this->expectException(InvalidTypeException::class);
+        cast(new stdClass(), CastExpression::SIGNED);
     }
 
     public function testPlus()

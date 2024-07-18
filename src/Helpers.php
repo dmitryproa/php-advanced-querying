@@ -13,6 +13,7 @@ use DmitryProA\PhpAdvancedQuerying\Conditions\NotCondition;
 use DmitryProA\PhpAdvancedQuerying\Conditions\NullCondition;
 use DmitryProA\PhpAdvancedQuerying\Conditions\OrCondition;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ArithmeticExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\CastExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ColumnExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
@@ -132,6 +133,11 @@ function groupconcat($expr, bool $distinct = false, string $separator = ',')
 function count_(bool $distinct = false, ...$columns)
 {
     return new CountExpression($distinct, ...columns(...$columns));
+}
+
+function cast($expr, string $type)
+{
+    return new CastExpression(expr($expr), $type);
 }
 
 function plus($left, $right): ArithmeticExpression

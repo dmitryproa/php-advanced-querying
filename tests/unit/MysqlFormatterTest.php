@@ -12,6 +12,7 @@ use DmitryProA\PhpAdvancedQuerying\Conditions\NullCondition;
 use DmitryProA\PhpAdvancedQuerying\Conditions\OrCondition;
 use DmitryProA\PhpAdvancedQuerying\Expression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ArithmeticExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\CastExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ColumnExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
@@ -124,6 +125,13 @@ class MysqlFormatterTest extends TestCase
         $expr = new CountExpression(true, new ColumnExpression('col'), new ColumnExpression('col2'));
         $sql = $this->formatter->formatExpression($expr);
         $this->assertSql('COUNT(DISTINCT `col`, `col2`)', $sql);
+    }
+
+    public function testCastExpression()
+    {
+        $expr = new CastExpression(new ColumnExpression('test'), CastExpression::BINARY);
+        $sql = $this->formatter->formatExpression($expr);
+        $this->assertSql('CAST(`test` AS BINARY)', $sql);
     }
 
     public function testArithmeticExpression()

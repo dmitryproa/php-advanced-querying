@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DmitryProA\PhpAdvancedQuerying\Conditions\ExprCondition;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ArithmeticExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\CastExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ColumnExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
@@ -92,6 +93,17 @@ class ExpressionTest extends TestCase
         $expr2 = new GroupConcatExpression($column);
         $this->assertFalse($expr2->distinct);
         $this->assertEquals(',', $expr2->separator);
+    }
+
+    public function testCastExpression()
+    {
+        $column = new ColumnExpression('test');
+        $expr = new CastExpression($column, CastExpression::SIGNED);
+        $this->assertEquals($column, $expr->expr);
+        $this->assertEquals(CastExpression::SIGNED, $expr->type);
+
+        $this->expectException(InvalidArgumentException::class);
+        new CastExpression($column, 'invalid');
     }
 
     public function testFunctionExpression()
