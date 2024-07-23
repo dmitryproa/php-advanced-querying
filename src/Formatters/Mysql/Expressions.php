@@ -13,6 +13,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 
 trait Expressions
 {
@@ -25,6 +26,7 @@ trait Expressions
         GroupConcatExpression::class => 'formatGroupConcatExpression',
         CountExpression::class => 'formatCountExpression',
         CastExpression::class => 'formatCastExpression',
+        WindowFunctionExpression::class => 'formatWindowFunctionExpression',
         ArithmeticExpression::class => 'formatArithmeticExpression',
         ConditionExpression::class => 'formatConditionExpression',
     ];
@@ -100,6 +102,16 @@ trait Expressions
     protected function formatCastExpression(CastExpression $expr): string
     {
         return 'CAST('.$this->formatExpression($expr->expr)." AS {$expr->type})";
+    }
+
+    protected function formatWindowFunctionExpression(WindowFunctionExpression $expr): string
+    {
+        $orderBy = $this->formatOrderBy($expr->orderBy_);
+
+        return $this->formatFunctionExpression($expr->function)
+            .' OVER (PARTITION BY '.$this->formatExpression($expr->partitionExpr)
+            .($orderBy ? " {$orderBy}" : '')
+            .')';
     }
 
     protected function formatArithmeticExpression(ArithmeticExpression $expr): string

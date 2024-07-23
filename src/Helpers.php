@@ -21,6 +21,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Statements\Select;
 
 const REGEX_COLUMN = '[a-z_][a-z0-9_]*(?:\\.[a-z_][a-z0-9_]*)?';
@@ -135,9 +136,21 @@ function count_(bool $distinct = false, ...$columns)
     return new CountExpression($distinct, ...columns(...$columns));
 }
 
-function cast($expr, string $type)
+function cast($expr, string $type): CastExpression
 {
     return new CastExpression(expr($expr), $type);
+}
+
+/** @param FunctionExpression|string $function */
+function over($function, $partitionExpr): WindowFunctionExpression
+{
+    if (is_string($function)) {
+        $function = func($function);
+    }
+
+    checkType($function, FunctionExpression::class);
+
+    return new WindowFunctionExpression($function, expr($partitionExpr));
 }
 
 function plus($left, $right): ArithmeticExpression

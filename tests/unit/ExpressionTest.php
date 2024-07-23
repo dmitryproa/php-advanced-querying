@@ -12,7 +12,9 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\InvalidTypeException;
+use DmitryProA\PhpAdvancedQuerying\OrderBy;
 use DmitryProA\PhpAdvancedQuerying\Statements\Select;
 use PHPUnit\Framework\TestCase;
 
@@ -116,6 +118,24 @@ class ExpressionTest extends TestCase
 
         $this->expectException(InvalidTypeException::class);
         new FunctionExpression('test', 'test');
+    }
+
+    public function testWindowFunctionExpression()
+    {
+        $function = new FunctionExpression('first_value', new ColumnExpression('test'));
+        $column = new ColumnExpression('column');
+        $orderColumn1 = new ColumnExpression('column2');
+        $orderColumn2 = new ColumnExpression('column3');
+
+        $expr = new WindowFunctionExpression($function, $column);
+        $expr->OrderBy($orderColumn1)->OrderBy($orderColumn2, OrderBy::DESC);
+
+        $this->assertEquals($function, $expr->function);
+        $this->assertEquals($column, $expr->partitionExpr);
+        $this->assertEquals([new OrderBy($orderColumn1), new OrderBy($orderColumn2, OrderBy::DESC)], $expr->orderBy_);
+
+        $this->expectException(InvalidArgumentException::class);
+        new WindowFunctionExpression(new FunctionExpression('invalid'), new ColumnExpression('test'));
     }
 
     public function testArithmeticExpression()

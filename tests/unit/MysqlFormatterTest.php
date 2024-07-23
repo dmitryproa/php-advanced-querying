@@ -20,6 +20,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Formatters\MysqlFormatter;
 use DmitryProA\PhpAdvancedQuerying\Join;
 use DmitryProA\PhpAdvancedQuerying\OrderBy;
@@ -132,6 +133,22 @@ class MysqlFormatterTest extends TestCase
         $expr = new CastExpression(new ColumnExpression('test'), CastExpression::BINARY);
         $sql = $this->formatter->formatExpression($expr);
         $this->assertSql('CAST(`test` AS BINARY)', $sql);
+    }
+
+    public function testOverExpression()
+    {
+        $expr = new WindowFunctionExpression(
+            new FunctionExpression('first_value', new ColumnExpression('column')),
+            new ColumnExpression('column2')
+        );
+        $expr->OrderBy(new ColumnExpression('column3'))->OrderBy(new ColumnExpression('column4'), OrderBy::DESC);
+        $sql = $this->formatter->formatExpression($expr);
+
+        $this->assertSql('FIRST_VALUE(`column`) OVER (PARTITION BY `column2` ORDER BY `column3` ASC, `column4` DESC)', $sql);
+
+        $expr = new WindowFunctionExpression(new FunctionExpression('row_number'), new ColumnExpression('column'));
+        $sql = $this->formatter->formatExpression($expr);
+        $this->assertSql('ROW_NUMBER() OVER (PARTITION BY `column`)', $sql);
     }
 
     public function testArithmeticExpression()

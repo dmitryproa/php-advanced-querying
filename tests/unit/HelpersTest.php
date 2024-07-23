@@ -20,6 +20,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\FieldValue;
 use DmitryProA\PhpAdvancedQuerying\InvalidTypeException;
 use DmitryProA\PhpAdvancedQuerying\Statements\Select;
@@ -61,6 +62,7 @@ use function DmitryProA\PhpAdvancedQuerying\notEq;
 use function DmitryProA\PhpAdvancedQuerying\notIn;
 use function DmitryProA\PhpAdvancedQuerying\notLike;
 use function DmitryProA\PhpAdvancedQuerying\or_;
+use function DmitryProA\PhpAdvancedQuerying\over;
 use function DmitryProA\PhpAdvancedQuerying\plus;
 use function DmitryProA\PhpAdvancedQuerying\select;
 use function DmitryProA\PhpAdvancedQuerying\table;
@@ -199,6 +201,27 @@ class HelpersTest extends TestCase
 
         $this->expectException(InvalidTypeException::class);
         cast(new stdClass(), CastExpression::SIGNED);
+    }
+
+    public function testOver()
+    {
+        $over = over('row_number', 'column');
+        $expected = new WindowFunctionExpression(new FunctionExpression('row_number'), new ColumnExpression('column'));
+        $this->assertEquals($expected, $over);
+
+        $func = new FunctionExpression('first_value', new ColumnExpression('test'));
+        $over = over($func, 'column');
+        $expected = new WindowFunctionExpression($func, new ColumnExpression('column'));
+        $this->assertEquals($expected, $over);
+
+        $this->expectException(InvalidTypeException::class);
+        over(123, 'column');
+    }
+
+    public function testOverException()
+    {
+        $this->expectException(InvalidTypeException::class);
+        over('row_number', new stdClass());
     }
 
     public function testPlus()
