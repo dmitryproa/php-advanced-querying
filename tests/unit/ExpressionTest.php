@@ -28,6 +28,10 @@ use PHPUnit\Framework\TestCase;
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression
+ * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression
+ * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\CastExpression
+ * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression
+ * 
  */
 class ExpressionTest extends TestCase
 {
