@@ -354,6 +354,25 @@ class MysqlFormatterTest extends TestCase
         $sql = $this->formatter->format($select, $params);
         $this->assertEquals($expectedParams, $params);
         $this->assertSql("SELECT * FROM ({$expected}) as `s1`;", $sql);
+
+        $unionSelect = new Select('unionTable', ['unionColumn']);
+        $unionSelect->where()->eq('column1', column('column2'))->end();
+        $expectedUnion = trim($this->formatter->format($unionSelect), ';');
+
+        $select->unionSelect('unionTable', ['unionColumn'], true)
+            ->where()->eq('column1', column('column2'))->end()
+        ;
+        $sql = $this->formatter->format($select, $params);
+        $this->assertEquals($expectedParams, $params);
+        $this->assertSql("SELECT * FROM ({$expected}) as `s1` UNION ALL {$expectedUnion};", $sql);
+
+        $select = (new Select(null, ['alias' => 1]))
+            ->unionSelect(null, [2])
+            ->unionSelect(null, [3])
+        ;
+        $sql = $this->formatter->format($select, $params);
+        $this->assertEquals(['v1' => 1, 'v2' => 2, 'v3' => 3], $params);
+        $this->assertSql('SELECT :v1 as `alias` UNION SELECT :v2 UNION SELECT :v3;', $sql);
     }
 
     public function testUpdate()

@@ -44,6 +44,14 @@ class Select extends Statement
     /** @var Condition */
     protected $having_;
 
+    /** @var Select */
+    protected $unionSelect_;
+
+    /** @var Select */
+    protected $unionOrigin;
+
+    protected $unionAll = false;
+
     protected $limitNumber = 0;
     protected $offsetNumber = 0;
 
@@ -152,6 +160,17 @@ class Select extends Statement
         return $this->having_;
     }
 
+    public function unionSelect($table = null, $fields = [], $unionAll = false)
+    {
+        $select = new Select($table, $fields);
+        $select->unionOrigin = $this->unionOrigin ?? $this;
+
+        $this->unionSelect_ = $select;
+        $this->unionAll = $unionAll;
+
+        return $select;
+    }
+
     /** @return OrderBy[] */
     public function getOrderBy(): array
     {
@@ -183,6 +202,23 @@ class Select extends Statement
     public function getHaving()
     {
         return $this->having_;
+    }
+
+    /** @return null|Select */
+    public function getUnionSelect()
+    {
+        return $this->unionSelect_;
+    }
+
+    public function getUnionAll(): bool
+    {
+        return $this->unionAll;
+    }
+
+    /** @return null|Select */
+    public function getUnionOrigin()
+    {
+        return $this->unionOrigin;
     }
 
     protected function setHaving(Condition $condition)

@@ -300,6 +300,17 @@ $select = $builder->select($select)->orderBy("type");
 // -> SELECT * FROM (SELECT `type`, COUNT(*) as `count` FROM `table` GROUP BY `type`) ORDER BY `type`;
 ```
 
+`UNION SELECT` statement can be made by calling an `unionSelect()` functions, which returns a new `SELECT`.
+For example:
+```php
+$select->unionSelect("anotherTable", ["column"], true); //-> SELECT ... UNION ALL SELECT `column` FROM `anotherTable`;
+$builder->select(null, ["id" => 123])
+    ->unionSelect(null, [456])
+    ->unionSelect(null, [589]);
+//-> SELECT :v1 as `id` UNION SELECT :v2 UNION SELECT :v3;
+```
+
+
 <a name="block2.8.4"></a>
 
 ### 2.8.4 UPDATE statement [↑](#index_block)

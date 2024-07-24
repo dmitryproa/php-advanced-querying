@@ -18,6 +18,7 @@ use DmitryProA\PhpAdvancedQuerying\Statements\Replace;
 use DmitryProA\PhpAdvancedQuerying\Statements\ReplaceSelect;
 use DmitryProA\PhpAdvancedQuerying\Statements\Select;
 use DmitryProA\PhpAdvancedQuerying\Statements\Update;
+use DmitryProA\PhpAdvancedQuerying\Table;
 use PHPUnit\Framework\TestCase;
 
 use function DmitryProA\PhpAdvancedQuerying\column;
@@ -103,6 +104,18 @@ class StatementTest extends TestCase
 
         $select2 = new Select($select);
         $this->assertEquals($select, $select2->getTable());
+
+        $select = new Select($this->table, $selectColumns);
+
+        $table = new Table('testTable');
+        $columns = ['alias' => new ColumnExpression('column')];
+        $unionSelect = $select->unionSelect($table, $columns, true);
+
+        $expectedSelect = new Select($table, $columns);
+        $this->assertEquals($unionSelect, $select->getUnionSelect());
+        $this->assertEquals($expectedSelect->getTable(), $unionSelect->getTable());
+        $this->assertEquals($expectedSelect->getColumns(), $unionSelect->getColumns());
+        $this->assertTrue($select->getUnionAll());
 
         $this->expectException(InvalidTypeException::class);
         new Select(123);

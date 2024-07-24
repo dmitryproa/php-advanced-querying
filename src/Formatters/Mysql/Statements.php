@@ -30,8 +30,13 @@ trait Statements
         Delete::class => 'formatDelete',
     ];
 
-    protected function formatSelect(Select $select): string
+    protected function formatSelect(Select $select, bool $isUnion = false): string
     {
+        $unionOrigin = $select->getUnionOrigin();
+        if (!$isUnion && $unionOrigin) {
+            return $this->formatSelect($unionOrigin);
+        }
+
         $query = 'SELECT';
         if ($select->getDistinct()) {
             $query .= ' DISTINCT';
@@ -78,6 +83,11 @@ trait Statements
         }
         $query .= $this->formatOrderBy($select->getOrderBy());
         $query .= $this->formatLimit($select);
+
+        $unionSelect = $select->getUnionSelect();
+        if ($unionSelect) {
+            $query .= $this->newline().($select->getUnionAll() ? 'UNION ALL ' : 'UNION ').$this->formatSelect($unionSelect, true);
+        }
 
         return trim($query);
     }
