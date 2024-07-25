@@ -117,6 +117,16 @@ class StatementTest extends TestCase
         $this->assertEquals($expectedSelect->getColumns(), $unionSelect->getColumns());
         $this->assertTrue($select->getUnionAll());
 
+        $select = new Select('table', ['column']);
+        $select->unionSelect('table2', ['column2']);
+        $select->unionSelect('table3', ['column3']);
+
+        $select2 = new Select('table', ['column']);
+        $select2 = $select2->unionSelect('table2', ['column2']);
+        $select2 = $select2->unionSelect('table3', ['column3']);
+
+        $this->assertEquals($select2->getUnionOrigin(), $select);
+
         $this->expectException(InvalidTypeException::class);
         new Select(123);
     }

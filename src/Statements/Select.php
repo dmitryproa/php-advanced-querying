@@ -160,8 +160,11 @@ class Select extends Statement
         return $this->having_;
     }
 
-    public function unionSelect($table = null, $fields = [], $unionAll = false)
+    public function unionSelect($table = null, $fields = [], $unionAll = false): Select
     {
+        if ($this->unionSelect_) {
+            return $this->unionSelect_->unionSelect($table, $fields, $unionAll);
+        }
         $select = new Select($table, $fields);
         $select->unionOrigin = $this->unionOrigin ?? $this;
 
