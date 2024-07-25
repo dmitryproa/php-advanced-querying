@@ -7,6 +7,8 @@ namespace DmitryProA\PhpAdvancedQuerying\Expressions;
 use DmitryProA\PhpAdvancedQuerying\Expression;
 use DmitryProA\PhpAdvancedQuerying\OrderBy;
 
+use function DmitryProA\PhpAdvancedQuerying\expr;
+
 class WindowFunctionExpression extends Expression
 {
     const ALLOWED_FUNCTIONS = [
@@ -44,9 +46,9 @@ class WindowFunctionExpression extends Expression
         $this->partitionExpr = $partitionExpr;
     }
 
-    public function orderBy(Expression $expr, string $direction = OrderBy::ASC): self
+    public function orderBy($expr, string $direction = OrderBy::ASC): self
     {
-        $this->orderBy_[] = new OrderBy($expr, $direction);
+        $this->orderBy_[] = new OrderBy(expr($expr), $direction);
 
         return $this;
     }

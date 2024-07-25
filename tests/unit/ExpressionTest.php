@@ -22,16 +22,15 @@ use PHPUnit\Framework\TestCase;
  * @internal
  *
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\ArithmeticExpression
+ * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\CastExpression
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\ColumnExpression
+ * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression
- * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression
- * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\CastExpression
  * @covers \DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression
- * 
  */
 class ExpressionTest extends TestCase
 {
@@ -128,15 +127,19 @@ class ExpressionTest extends TestCase
     {
         $function = new FunctionExpression('first_value', new ColumnExpression('test'));
         $column = new ColumnExpression('column');
-        $orderColumn1 = new ColumnExpression('column2');
-        $orderColumn2 = new ColumnExpression('column3');
 
         $expr = new WindowFunctionExpression($function, $column);
-        $expr->OrderBy($orderColumn1)->OrderBy($orderColumn2, OrderBy::DESC);
+        $expr->OrderBy('column2')->OrderBy('column3', OrderBy::DESC);
 
         $this->assertEquals($function, $expr->function);
         $this->assertEquals($column, $expr->partitionExpr);
-        $this->assertEquals([new OrderBy($orderColumn1), new OrderBy($orderColumn2, OrderBy::DESC)], $expr->orderBy_);
+        $this->assertEquals(
+            [
+                new OrderBy(new ColumnExpression('column2')),
+                new OrderBy(new ColumnExpression('column3'), OrderBy::DESC),
+            ],
+            $expr->orderBy_
+        );
 
         $this->expectException(InvalidArgumentException::class);
         new WindowFunctionExpression(new FunctionExpression('invalid'), new ColumnExpression('test'));
