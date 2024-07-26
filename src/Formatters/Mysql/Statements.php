@@ -8,6 +8,7 @@ use DmitryProA\PhpAdvancedQuerying\Column;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression;
 use DmitryProA\PhpAdvancedQuerying\FieldValue;
 use DmitryProA\PhpAdvancedQuerying\QueryFormattingException;
+use DmitryProA\PhpAdvancedQuerying\SelectTable;
 use DmitryProA\PhpAdvancedQuerying\Statement;
 use DmitryProA\PhpAdvancedQuerying\Statements\Delete;
 use DmitryProA\PhpAdvancedQuerying\Statements\Insert;
@@ -42,6 +43,7 @@ trait Statements
             $query .= ' DISTINCT';
         }
 
+        $table = $select->getTable();
         $columns = $select->getColumns();
 
         if (!empty($columns)) {
@@ -66,9 +68,18 @@ trait Statements
 
             $query .= implode(','.$this->newline(), $formattedColumns).$this->indentDown();
         } else {
-            $query .= ($select->getTable() ? ' *' : ' 1').$this->newline();
+            $query .= ($table ? ' *' : ' 1').$this->newline();
         }
-        $query .= $this->formatFrom($select);
+
+        if ($table) {
+            $query .= 'FROM';
+            if ($table instanceof SelectTable) {
+                $query .= $this->indentUp().$this->formatTable($table).$this->indentDown();
+            } else {
+                $query .= ' '.$this->formatTable($table);
+            }
+            $query .= $this->newline();
+        }
         $query .= $this->formatJoins($select);
         $query .= $this->formatWhere($select);
 

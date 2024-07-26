@@ -42,6 +42,7 @@ use function DmitryProA\PhpAdvancedQuerying\greater;
 use function DmitryProA\PhpAdvancedQuerying\isNull;
 use function DmitryProA\PhpAdvancedQuerying\plus;
 use function DmitryProA\PhpAdvancedQuerying\select;
+use function DmitryProA\PhpAdvancedQuerying\table;
 
 /**
  * @internal
@@ -318,8 +319,8 @@ class MysqlFormatterTest extends TestCase
         $this->assertSql($expected.';', $sql);
 
         $st->join('test3 as t3', Join::INNER)->eq('t.col', column('t3.col'))->end();
-        $st->join('test4 as t4')->eq('t4.sort', 1)->end();
-        $expected .= ' INNER JOIN `test3` AS `t3` ON (`t`.`col` = `t3`.`col`) JOIN `test4` AS `t4` ON (`t4`.`sort` = :v2)';
+        $st->join(table(select('test4', ['joinColumn']), 't4'))->eq('t4.sort', 1)->end();
+        $expected .= ' INNER JOIN `test3` AS `t3` ON (`t`.`col` = `t3`.`col`) JOIN (SELECT `joinColumn` FROM `test4`) AS `t4` ON (`t4`.`sort` = :v2)';
         $expectedParams['v2'] = 1;
         $sql = $this->formatter->format($st, $params);
         $this->assertEquals($expectedParams, $params);
@@ -355,6 +356,11 @@ class MysqlFormatterTest extends TestCase
         $this->assertEquals($expectedParams, $params);
         $this->assertSql("SELECT * FROM ({$expected}) as `s1`;", $sql);
 
+        $select = new Select(table($st, 'alias'));
+        $sql = $this->formatter->format($select, $params);
+        $this->assertEquals($expectedParams, $params);
+        $this->assertSql("SELECT * FROM ({$expected}) as `alias`;", $sql);
+
         $unionSelect = new Select('unionTable', ['unionColumn']);
         $unionSelect->where()->eq('column1', column('column2'))->end();
         $expectedUnion = trim($this->formatter->format($unionSelect), ';');
@@ -364,7 +370,7 @@ class MysqlFormatterTest extends TestCase
         ;
         $sql = $this->formatter->format($select, $params);
         $this->assertEquals($expectedParams, $params);
-        $this->assertSql("SELECT * FROM ({$expected}) as `s1` UNION ALL {$expectedUnion};", $sql);
+        $this->assertSql("SELECT * FROM ({$expected}) as `alias` UNION ALL {$expectedUnion};", $sql);
 
         $select = (new Select(null, ['alias' => 1]))
             ->unionSelect(null, [2])

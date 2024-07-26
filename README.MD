@@ -276,6 +276,8 @@ $select->setColumn(func("IF", greater("column1", "column2"), "column1", null)); 
 ```php
 $statement
     ->join($table, $joinType = Join::OUTER)->...conditions...->end()
+    ->join(select(...))
+    ->join(table(select(...), $joinTableAlias))
     ->join...
 ```
 Available join types: `Join::OUTER`, `Join::INNER`, `Join::LEFT`, `Join::RIGHT`.
@@ -298,6 +300,7 @@ Available join types: `Join::OUTER`, `Join::INNER`, `Join::LEFT`, `Join::RIGHT`.
 $inner = $builder->select("table", ["type", "count" => count_()])->groupBy("type");
 $select = $builder->select($select)->orderBy("type");
 // -> SELECT * FROM (SELECT `type`, COUNT(*) as `count` FROM `table` GROUP BY `type`) ORDER BY `type`;
+$select = $builder->select(table($select, "selectAlias")); // -> SELECT * FROM (SELECT ...) as `selectAlias`
 ```
 
 `UNION SELECT` statement can be made by calling an `unionSelect()` functions, which returns a new `SELECT`.

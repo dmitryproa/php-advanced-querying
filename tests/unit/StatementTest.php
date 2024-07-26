@@ -8,6 +8,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
 use DmitryProA\PhpAdvancedQuerying\FieldValue;
 use DmitryProA\PhpAdvancedQuerying\InvalidTypeException;
 use DmitryProA\PhpAdvancedQuerying\Join;
+use DmitryProA\PhpAdvancedQuerying\SelectTable;
 use DmitryProA\PhpAdvancedQuerying\Statement;
 use DmitryProA\PhpAdvancedQuerying\Statements\ConditionalStatement;
 use DmitryProA\PhpAdvancedQuerying\Statements\Delete;
@@ -103,7 +104,10 @@ class StatementTest extends TestCase
         $this->testJoinStatement($select);
 
         $select2 = new Select($select);
-        $this->assertEquals($select, $select2->getTable());
+        $this->assertEquals(new SelectTable($select), $select2->getTable());
+
+        $select2 = new Select(table($select, 'alias'));
+        $this->assertEquals(new SelectTable($select, 'alias'), $select2->getTable());
 
         $select = new Select($this->table, $selectColumns);
 

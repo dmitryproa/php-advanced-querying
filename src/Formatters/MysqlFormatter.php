@@ -13,6 +13,7 @@ use DmitryProA\PhpAdvancedQuerying\Formatters\Mysql\Expressions;
 use DmitryProA\PhpAdvancedQuerying\Formatters\Mysql\Statements;
 use DmitryProA\PhpAdvancedQuerying\Join;
 use DmitryProA\PhpAdvancedQuerying\OrderBy;
+use DmitryProA\PhpAdvancedQuerying\SelectTable;
 use DmitryProA\PhpAdvancedQuerying\Statement;
 use DmitryProA\PhpAdvancedQuerying\Statements\ConditionalStatement;
 use DmitryProA\PhpAdvancedQuerying\Statements\JoinStatement;
@@ -105,23 +106,6 @@ class MysqlFormatter
         return '';
     }
 
-    protected function formatFrom(Select $select)
-    {
-        $table = $select->getTable();
-        if ($table instanceof Select) {
-            return 'FROM'.$this->indentUp().'('.$this->formatSelect($table).$this->newline().') AS `s'.(++$this->tableSelects).'`'.$this->indentDown();
-        }
-
-        if ($table) {
-            return 'FROM '.($table->alias
-                    ? "`{$table->name}` AS `{$table->alias}`"
-                    : "`{$table->name}`")
-                .$this->newline();
-        }
-
-        return '';
-    }
-
     protected function formatLimit(Select $select)
     {
         $limit = $limit = $select->getLimit();
@@ -144,6 +128,11 @@ class MysqlFormatter
 
     protected function formatTable(Table $table): string
     {
+        if ($table instanceof SelectTable) {
+            $alias = $table->alias ?: 's'.(++$this->tableSelects);
+
+            return '('.$this->formatSelect($table->select).$this->newline().") as `{$alias}`";
+        }
         $query = "`{$table->name}`";
 
         if ($table->alias) {

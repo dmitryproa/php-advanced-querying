@@ -28,7 +28,7 @@ const REGEX_COLUMN = '[a-z_][a-z0-9_]*(?:\\.[a-z_][a-z0-9_]*)?';
 const REGEX_NAME = '[a-z_][a-z0-9_]*';
 
 /**
- * @param null|string|Table $table
+ * @param null|Select|string|Table $table
  *
  * @return null|Table
  */
@@ -46,6 +46,11 @@ function table($table, string $alias = '')
 
             return $table;
         }
+
+        if ($table instanceof Select) {
+            return new SelectTable($table, $alias);
+        }
+
         checkType($table, Table::class);
 
         if ($alias) {

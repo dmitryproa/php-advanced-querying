@@ -11,6 +11,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\ColumnExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ConditionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
 use DmitryProA\PhpAdvancedQuerying\OrderBy;
+use DmitryProA\PhpAdvancedQuerying\SelectTable;
 use DmitryProA\PhpAdvancedQuerying\Statement;
 use DmitryProA\PhpAdvancedQuerying\Table;
 
@@ -71,7 +72,7 @@ class Select extends Statement
      */
     public function setTable($table): Statement
     {
-        $this->table = $table instanceof Select ? $table : table($table);
+        $this->table = table($table);
 
         return $this;
     }
@@ -91,6 +92,8 @@ class Select extends Statement
             $column = column($column);
         } elseif ($column instanceof Select) {
             $column = new SelectExpression($column);
+        } elseif ($column instanceof SelectTable) {
+            $column = new SelectExpression($column->select);
         } elseif ($column instanceof Condition) {
             $column = new ConditionExpression($column);
         } elseif (!$column instanceof Expression) {

@@ -22,7 +22,7 @@ trait JoinStatement
     /** @var string */
     protected $joinType;
 
-    /** @param string|Table $table */
+    /** @param Select|string|Table $table */
     public function join($table, string $type = Join::OUTER): Condition
     {
         $this->joinTable = table($table);
