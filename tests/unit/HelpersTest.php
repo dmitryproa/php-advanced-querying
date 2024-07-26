@@ -131,9 +131,10 @@ class HelpersTest extends TestCase
         $expectedColumns = [new ColumnExpression('test'), $column, $column];
 
         $this->assertEquals($expectedColumns, columns(...$columns));
+        $this->assertEquals($expectedColumns, columns($columns));
 
         $this->expectException(InvalidTypeException::class);
-        columns(123);
+        columns(new stdClass());
     }
 
     public function testLiteral()
@@ -146,7 +147,7 @@ class HelpersTest extends TestCase
         $this->assertEquals($literal, $literal2);
 
         $this->expectException(InvalidTypeException::class);
-        literal([]);
+        literal(new stdClass());
     }
 
     public function testLiterals()
@@ -155,9 +156,10 @@ class HelpersTest extends TestCase
         $expectedLiterals = [new LiteralExpression(123), new LiteralExpression('test')];
 
         $this->assertEquals($expectedLiterals, literals(...$literals));
+        $this->assertEquals($expectedLiterals, literals($literals));
 
         $this->expectException(InvalidTypeException::class);
-        literals([]);
+        literals(new stdClass());
     }
 
     public function testLiteralOrExpr()
@@ -170,7 +172,7 @@ class HelpersTest extends TestCase
         $this->assertEquals($column, $expr);
 
         $this->expectException(InvalidTypeException::class);
-        literalOrExpr([]);
+        literalOrExpr(new stdClass());
     }
 
     public function testGroupconcat()
@@ -180,17 +182,18 @@ class HelpersTest extends TestCase
         $this->assertEquals($expected, $groupConcat);
 
         $this->expectException(InvalidTypeException::class);
-        groupconcat([]);
+        groupconcat(new stdClass());
     }
 
     public function testCount()
     {
-        $count = count_(true, 'col1', 't.col2');
+        $columns = ['col1', 't.col2'];
         $expected = new CountExpression(true, new ColumnExpression('col1'), new ColumnExpression('col2', 't'));
-        $this->assertEquals($expected, $count);
+        $this->assertEquals($expected, count_(true, ...$columns));
+        $this->assertEquals($expected, count_(true, $columns));
 
         $this->expectException(InvalidTypeException::class);
-        count_(false, []);
+        count_(false, new stdClass());
     }
 
     public function testCast()
@@ -289,13 +292,13 @@ class HelpersTest extends TestCase
         $this->assertEquals($expected, $expr);
 
         $this->expectException(InvalidTypeException::class);
-        expr([]);
+        expr(new stdClass());
     }
 
     public function testExprs()
     {
         $select = new Select();
-        $exprs = exprs('t.column', 123, ';', $select);
+        $exprs = ['t.column', 123, ';', $select];
         $expected = [
             new ColumnExpression('column', 't'),
             new LiteralExpression(123),
@@ -303,10 +306,11 @@ class HelpersTest extends TestCase
             new SelectExpression($select),
         ];
 
-        $this->assertEquals($expected, $exprs);
+        $this->assertEquals($expected, exprs(...$exprs));
+        $this->assertEquals($expected, exprs($exprs));
 
         $this->expectException(InvalidTypeException::class);
-        exprs([]);
+        exprs(new stdClass());
     }
 
     public function testCondition()
@@ -319,7 +323,7 @@ class HelpersTest extends TestCase
         $this->assertEquals($condition, $condition2);
 
         $this->expectException(InvalidTypeException::class);
-        condition([]);
+        condition(new stdClass());
     }
 
     public function testConditions()
@@ -330,7 +334,7 @@ class HelpersTest extends TestCase
         $this->assertEquals([new ExprCondition(new ColumnExpression('column')), $eq], $conditions);
 
         $this->expectException(InvalidTypeException::class);
-        conditions([]);
+        conditions(new stdClass());
     }
 
     public function testAnd()
@@ -342,19 +346,20 @@ class HelpersTest extends TestCase
         $this->assertEquals($expected, $and);
 
         $this->expectException(InvalidTypeException::class);
-        and_([]);
+        and_(new stdClass());
     }
 
     public function testOr()
     {
         $eq = new CompareCondition(new ColumnExpression('test'), new LiteralExpression(1), CompareCondition::EQUALS);
-        $or = or_('column', $eq);
+        $conditions = ['column', $eq];
 
         $expected = new OrCondition(new ExprCondition(new ColumnExpression('column')), $eq);
-        $this->assertEquals($expected, $or);
+        $this->assertEquals($expected, or_(...$conditions));
+        $this->assertEquals($expected, or_($conditions));
 
         $this->expectException(InvalidTypeException::class);
-        or_([]);
+        or_(new stdClass());
     }
 
     public function testEq()
@@ -443,13 +448,14 @@ class HelpersTest extends TestCase
 
     public function testIn()
     {
-        $in = in('column', 123, 'test');
+        $exprs = [123, 'test'];
         $expected = new InCondition(
             new ColumnExpression('column'),
             new LiteralExpression(123),
             new LiteralExpression('test')
         );
-        $this->assertEquals($expected, $in);
+        $this->assertEquals($expected, in('column', ...$exprs));
+        $this->assertEquals($expected, in('column', $exprs));
 
         $this->expectException(InvalidTypeException::class);
         in([], new stdClass());
@@ -462,7 +468,7 @@ class HelpersTest extends TestCase
         $this->assertEquals($expected, $not);
 
         $this->expectException(InvalidTypeException::class);
-        not([]);
+        not(new stdClass());
     }
 
     public function testIsNull()
@@ -472,7 +478,7 @@ class HelpersTest extends TestCase
         $this->assertEquals($expected, $isNull);
 
         $this->expectException(InvalidTypeException::class);
-        isNull([]);
+        isNull(new stdClass());
     }
 
     public function testIsNotNull()
@@ -482,7 +488,7 @@ class HelpersTest extends TestCase
         $this->assertEquals($expected, $notNull);
 
         $this->expectException(InvalidTypeException::class);
-        isNotNull([]);
+        isNotNull(new stdClass());
     }
 
     public function testNotEq()
@@ -507,13 +513,14 @@ class HelpersTest extends TestCase
 
     public function testNotIn()
     {
-        $notIn = notIn('column', 123, 'test');
+        $exprs = [123, 'test'];
         $expected = new NotCondition(new InCondition(
             new ColumnExpression('column'),
             new LiteralExpression(123),
             new LiteralExpression('test')
         ));
-        $this->assertEquals($expected, $notIn);
+        $this->assertEquals($expected, notIn('column', ...$exprs));
+        $this->assertEquals($expected, notIn('column', $exprs));
 
         $this->expectException(InvalidTypeException::class);
         notIn([], new stdClass());
@@ -526,7 +533,7 @@ class HelpersTest extends TestCase
         $this->assertEquals($expected, $true);
 
         $this->expectException(InvalidTypeException::class);
-        true([]);
+        true(new stdClass());
     }
 
     public function testFalse()
@@ -536,7 +543,7 @@ class HelpersTest extends TestCase
         $this->assertEquals($expected, $false);
 
         $this->expectException(InvalidTypeException::class);
-        false([]);
+        false(new stdClass());
     }
 
     public function testCheckType()

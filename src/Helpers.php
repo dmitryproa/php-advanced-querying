@@ -84,6 +84,10 @@ function column(string $name, string $table = ''): ColumnExpression
  */
 function columns(...$columns): array
 {
+    if ($columns && is_array($columns[0])) {
+        $columns = $columns[0];
+    }
+
     return array_map(function ($column) {
         if (is_string($column)) {
             $column = column($column);
@@ -107,11 +111,19 @@ function literalOrExpr($value): Expression
 /** @return LiteralExpression[] */
 function literals(...$values): array
 {
+    if ($values && is_array($values[0])) {
+        $values = $values[0];
+    }
+
     return array_map('DmitryProA\\PhpAdvancedQuerying\\literal', $values);
 }
 
 function func(string $function, ...$args): FunctionExpression
 {
+    if ($args && is_array($args[0])) {
+        $args = $args[0];
+    }
+
     $function = strtoupper($function);
 
     if ('GROUP_CONCAT' == $function) {
@@ -133,6 +145,10 @@ function groupconcat($expr, bool $distinct = false, string $separator = ',')
 /** @param ColumnExpression|string $columns */
 function count_(bool $distinct = false, ...$columns)
 {
+    if ($columns && is_array($columns[0])) {
+        $columns = $columns[0];
+    }
+
     return new CountExpression($distinct, ...columns(...$columns));
 }
 
@@ -206,6 +222,10 @@ function expr($value): Expression
 /** @return Expression[] */
 function exprs(...$values): array
 {
+    if ($values && is_array($values[0])) {
+        $values = $values[0];
+    }
+
     return array_map(__NAMESPACE__.'\\expr', $values);
 }
 
@@ -221,16 +241,28 @@ function condition($condition): Condition
 /** @return Condition[] */
 function conditions(...$conditions): array
 {
+    if ($conditions && is_array($conditions[0])) {
+        $conditions = $conditions[0];
+    }
+
     return array_map(function ($condition) { return condition($condition); }, $conditions);
 }
 
 function and_(...$conditions): AndCondition
 {
+    if ($conditions && is_array($conditions[0])) {
+        $conditions = $conditions[0];
+    }
+
     return new AndCondition(...conditions(...$conditions));
 }
 
 function or_(...$conditions): OrCondition
 {
+    if ($conditions && is_array($conditions[0])) {
+        $conditions = $conditions[0];
+    }
+
     return new OrCondition(...conditions(...$conditions));
 }
 
@@ -266,6 +298,10 @@ function like($left, $right): LikeCondition
 
 function in($expr, ...$values): InCondition
 {
+    if ($values && is_array($values[0])) {
+        $values = $values[0];
+    }
+
     return new InCondition(expr($expr), ...literals(...$values));
 }
 
@@ -296,6 +332,10 @@ function notLike($left, $right): NotCondition
 
 function notIn($expr, ...$values): NotCondition
 {
+    if ($values && is_array($values[0])) {
+        $values = $values[0];
+    }
+
     return not(in(expr($expr), ...literals(...$values)));
 }
 
