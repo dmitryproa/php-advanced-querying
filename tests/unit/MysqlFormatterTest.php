@@ -138,6 +138,14 @@ class MysqlFormatterTest extends TestCase
 
     public function testOverExpression()
     {
+        $expr = new WindowFunctionExpression(new FunctionExpression('row_number'));
+        $sql = $this->formatter->formatExpression($expr);
+        $this->assertSql('ROW_NUMBER() OVER()', $sql);
+
+        $expr->orderBy(new ColumnExpression('column'), OrderBy::DESC)->orderBy(new ColumnExpression('column2'));
+        $sql = $this->formatter->formatExpression($expr);
+        $this->assertSql('ROW_NUMBER() OVER(ORDER BY `column` DESC, `column2` ASC)', $sql);
+
         $expr = new WindowFunctionExpression(
             new FunctionExpression('first_value', new ColumnExpression('column')),
             new ColumnExpression('column2')

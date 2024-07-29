@@ -7,6 +7,7 @@ namespace DmitryProA\PhpAdvancedQuerying\Expressions;
 use DmitryProA\PhpAdvancedQuerying\Expression;
 use DmitryProA\PhpAdvancedQuerying\OrderBy;
 
+use function DmitryProA\PhpAdvancedQuerying\checkType;
 use function DmitryProA\PhpAdvancedQuerying\expr;
 
 class WindowFunctionExpression extends Expression
@@ -28,14 +29,17 @@ class WindowFunctionExpression extends Expression
     /** @var FunctionExpression */
     public $function;
 
-    /** @var Expression */
+    /** @var null|Expression */
     public $partitionExpr;
 
     /** @var OrderBy[] */
-    public $orderBy_ = [];
+    protected $orderBy_ = [];
 
-    public function __construct(FunctionExpression $function, Expression $partitionExpr)
+    /** @param null|Expression $partitionExpr */
+    public function __construct(FunctionExpression $function, $partitionExpr = null)
     {
+        checkType($partitionExpr, Expression::class, true);
+
         $function->function = strtoupper($function->function);
 
         if (!in_array($function->function, static::ALLOWED_FUNCTIONS)) {
@@ -51,5 +55,11 @@ class WindowFunctionExpression extends Expression
         $this->orderBy_[] = new OrderBy(expr($expr), $direction);
 
         return $this;
+    }
+
+    /** @return OrderBy[] */
+    public function getOrderBy(): array
+    {
+        return $this->orderBy_;
     }
 }

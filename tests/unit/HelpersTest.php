@@ -208,6 +208,9 @@ class HelpersTest extends TestCase
 
     public function testOver()
     {
+        $over = over('row_number');
+        $expected = new WindowFunctionExpression(new FunctionExpression('row_number'));
+
         $over = over('row_number', 'column');
         $expected = new WindowFunctionExpression(new FunctionExpression('row_number'), new ColumnExpression('column'));
         $this->assertEquals($expected, $over);

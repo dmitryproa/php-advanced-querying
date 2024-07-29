@@ -138,7 +138,7 @@ class ExpressionTest extends TestCase
                 new OrderBy(new ColumnExpression('column2')),
                 new OrderBy(new ColumnExpression('column3'), OrderBy::DESC),
             ],
-            $expr->orderBy_
+            $expr->getOrderBy()
         );
 
         $this->expectException(InvalidArgumentException::class);

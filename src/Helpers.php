@@ -162,8 +162,11 @@ function cast($expr, string $type): CastExpression
     return new CastExpression(expr($expr), $type);
 }
 
-/** @param FunctionExpression|string $function */
-function over($function, $partitionExpr): WindowFunctionExpression
+/**
+ * @param FunctionExpression|string $function
+ * @param null|mixed                $partitionExpr
+ * */
+function over($function, $partitionExpr = null): WindowFunctionExpression
 {
     if (is_string($function)) {
         $function = func($function);
@@ -171,7 +174,7 @@ function over($function, $partitionExpr): WindowFunctionExpression
 
     checkType($function, FunctionExpression::class);
 
-    return new WindowFunctionExpression($function, expr($partitionExpr));
+    return new WindowFunctionExpression($function, is_null($partitionExpr) ? null : expr($partitionExpr));
 }
 
 function plus($left, $right): ArithmeticExpression

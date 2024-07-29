@@ -211,8 +211,9 @@ groupconcat("column", true, ";") //-> GROUP_CONCAT(DISTINCT `column` SEPARATOR :
 cast($expression, $type) //CAST($expression AS $type)
 cast("column", CastExpression::SIGNED) //-> CAST(`column` AS SIGNED)
 
-over($function, $partitionExpr) //$function OVER (PARTITION BY $partitionExpr)
+over($function, $partitionExpr = null) //$function OVER ([PARTITION BY $partitionExpr])
 over(...)->orderBy($expr, $direction = OrderBy::ASC)->orderBy(...) //$function OVER (... ORDER BY $expr, ...)
+over("row_number") //-> ROW_NUMBER() OVER()
 over("row_number", "column")->orderBy("orderColumn", OrderBy::DESC) //-> ROW_NUMBER() OVER (PARTITION BY `column` ORDER BY `orderColumn` DESC)
 over(func("first_value", "valueColumn"), "column") //-> FIRST_VALUE(`valueColumn`) OVER (PARTITION BY `column`)
 ```

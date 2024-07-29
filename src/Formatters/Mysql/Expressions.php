@@ -106,12 +106,16 @@ trait Expressions
 
     protected function formatWindowFunctionExpression(WindowFunctionExpression $expr): string
     {
-        $orderBy = $this->formatOrderBy($expr->orderBy_);
+        $partitionSql = $expr->partitionExpr
+            ? 'PARTITION BY '.$this->formatExpression($expr->partitionExpr)
+            : '';
 
-        return $this->formatFunctionExpression($expr->function)
-            .' OVER (PARTITION BY '.$this->formatExpression($expr->partitionExpr)
-            .($orderBy ? " {$orderBy}" : '')
-            .')';
+        $orderBy = $expr->getOrderBy();
+        $orderBySql = $orderBy
+            ? ' '.$this->formatOrderBy($orderBy)
+            : '';
+
+        return $this->formatFunctionExpression($expr->function)." OVER ({$partitionSql}{$orderBySql})";
     }
 
     protected function formatArithmeticExpression(ArithmeticExpression $expr): string
