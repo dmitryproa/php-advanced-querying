@@ -98,6 +98,12 @@ class ExpressionTest extends TestCase
         $expr2 = new GroupConcatExpression($column);
         $this->assertFalse($expr2->distinct);
         $this->assertEquals(',', $expr2->separator);
+
+        $column2 = new ColumnExpression('test2');
+        $column3 = new ColumnExpression('test3');
+        $expr = new GroupConcatExpression($column);
+        $expr->orderBy($column2)->orderBy($column3, OrderBy::DESC);
+        $this->assertEquals([new OrderBy($column2), new OrderBy($column3, OrderBy::DESC)], $expr->getOrderBy());
     }
 
     public function testCastExpression()

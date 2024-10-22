@@ -116,6 +116,11 @@ class MysqlFormatterTest extends TestCase
         $expr = new GroupConcatExpression(new ColumnExpression('test'), true, ';');
         $sql = $this->formatter->formatExpression($expr);
         $this->assertSql('GROUP_CONCAT(DISTINCT `test` SEPARATOR :v1)', $sql);
+
+        $expr = new GroupConcatExpression(new ColumnExpression('test'), true, ';');
+        $expr->orderBy(new ColumnExpression('test2'))->orderBy(new ColumnExpression('test3'), OrderBy::DESC);
+        $sql = $this->formatter->formatExpression($expr);
+        $this->assertSql('GROUP_CONCAT(DISTINCT `test` ORDER BY `test2` ASC, `test3` DESC SEPARATOR :v2)', $sql);
     }
 
     public function testCountExpression()

@@ -76,6 +76,11 @@ trait Expressions
 
         $query .= $args;
 
+        $orderBy = $expr->getOrderBy();
+        if ($orderBy) {
+            $query .= ' '.$this->formatOrderBy($orderBy);
+        }
+
         if (',' != $expr->separator) {
             $query .= ' SEPARATOR '.$this->formatExpression(new LiteralExpression($expr->separator));
         }
