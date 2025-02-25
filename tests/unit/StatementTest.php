@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DmitryProA\PhpAdvancedQuerying\Column;
+use DmitryProA\PhpAdvancedQuerying\Conditions\ExprCondition;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ColumnExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
 use DmitryProA\PhpAdvancedQuerying\FieldValue;
@@ -368,6 +369,10 @@ class StatementTest extends TestCase
 
         $this->assertEquals($st, $end);
         $this->assertEquals($condition, $st->getCondition());
+
+        $condition2 = new ExprCondition(new LiteralExpression(1));
+        $st->setCondition($condition2);
+        $this->assertEquals($condition2, $st->getCondition());
     }
 
     /** @param JoinStatement $st */

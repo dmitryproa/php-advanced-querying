@@ -24,6 +24,7 @@ use function DmitryProA\PhpAdvancedQuerying\table;
 
 /**
  * @method null|Select|Table getTable()
+ * @method Select            setCondition(Condition $cond)
  */
 class Select extends Statement
 {

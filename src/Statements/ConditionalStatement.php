@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DmitryProA\PhpAdvancedQuerying\Statements;
 
 use DmitryProA\PhpAdvancedQuerying\Condition;
+use DmitryProA\PhpAdvancedQuerying\Statement;
 
 use function DmitryProA\PhpAdvancedQuerying\and_;
 
@@ -31,9 +32,11 @@ trait ConditionalStatement
         return $this->condition;
     }
 
-    public function setCondition(Condition $cond): void
+    public function setCondition(Condition $cond): Statement
     {
         ($this->conditionCallback ?? [$this, 'setWhere'])($cond);
+
+        return $this;
     }
 
     protected function setWhere(Condition $cond): void

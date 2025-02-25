@@ -16,7 +16,6 @@ use function DmitryProA\PhpAdvancedQuerying\literals;
  */
 class Replace extends Statement
 {
-    use ConditionalStatement;
     use FieldStatement;
 
     /** @var LiteralExpression[][] */

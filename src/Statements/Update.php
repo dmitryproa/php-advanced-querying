@@ -16,6 +16,7 @@ use function DmitryProA\PhpAdvancedQuerying\makeUpdateValues;
  * @method Update setTable(null|string|Table $table)
  * @method Update setValues(array $values)
  * @method Update setValue(string|ColumnExpression $field, $value)
+ * @method Update setCondition(Condition $cond)
  */
 class Update extends Statement
 {

@@ -7,6 +7,9 @@ namespace DmitryProA\PhpAdvancedQuerying\Statements;
 use DmitryProA\PhpAdvancedQuerying\Statement;
 use DmitryProA\PhpAdvancedQuerying\Table;
 
+/**
+ * @method Delete setCondition(Condition $cond)
+ */
 class Delete extends Statement
 {
     use ConditionalStatement;
