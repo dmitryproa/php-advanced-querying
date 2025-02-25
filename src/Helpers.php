@@ -20,6 +20,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\RawExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Statements\Select;
@@ -139,6 +140,15 @@ function func(string $function, ...$args): FunctionExpression
     }
 
     return new FunctionExpression($function, ...exprs(...$args));
+}
+
+function raw(...$parts): RawExpression
+{
+    if ($parts && is_array($parts[0])) {
+        $parts = $parts[0];
+    }
+
+    return new RawExpression($parts);
 }
 
 /** @param array|mixed $expr */

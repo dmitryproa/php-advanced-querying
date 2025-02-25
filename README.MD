@@ -69,6 +69,7 @@ LIMIT 10 OFFSET 1;
         * [2.7.2 Literal expression](#block2.7.2)
         * [2.7.3 Select expression](#block2.7.3)
         * [2.7.4 Function expression](#block2.7.4)
+        * [2.7.5 Raw expression](#block2.7.5)
     * [2.8 Statements](#block2.8)
         * [2.8.1 Conditional (WHERE) statements](#block2.8.1)
         * [2.8.2 JOIN statements](#block2.8.2)
@@ -217,6 +218,14 @@ over(...)->orderBy($expr, $direction = OrderBy::ASC)->orderBy(...) //$function O
 over("row_number") //-> ROW_NUMBER() OVER()
 over("row_number", "column")->orderBy("orderColumn", OrderBy::DESC) //-> ROW_NUMBER() OVER (PARTITION BY `column` ORDER BY `orderColumn` DESC)
 over(func("first_value", "valueColumn"), "column") //-> FIRST_VALUE(`valueColumn`) OVER (PARTITION BY `column`)
+```
+
+<a name="block2.7.5"></a>
+
+### 2.7.5 Raw Expression
+```php
+raw("BETWEEN", literal(1), "AND", 4) //-> BETWEEN :v1 AND 4
+raw("json->`field`::bool = true") //-> json->`field`::bool = true
 ```
 
 <a name="block2.8"></a>

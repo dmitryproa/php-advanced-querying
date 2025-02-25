@@ -11,6 +11,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\RawExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\InvalidTypeException;
@@ -182,5 +183,31 @@ class ExpressionTest extends TestCase
 
         $expr = new ConditionExpression($condition);
         $this->assertEquals($condition, $expr->condition);
+    }
+
+    public function testRawExpression()
+    {
+        $parts = ['test', 123, new ColumnExpression('column')];
+
+        $expr = new RawExpression($parts);
+        $this->assertEquals($parts, $expr->parts);
+    }
+
+    public function testRawExpressionException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new RawExpression([null]);
+    }
+
+    public function testRawExpressionException2()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new RawExpression([[]]);
+    }
+
+    public function testRawExpressionException3()
+    {
+        $this->expectException(InvalidTypeException::class);
+        new RawExpression([new stdClass()]);
     }
 }

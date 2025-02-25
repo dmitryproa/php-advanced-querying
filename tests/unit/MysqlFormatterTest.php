@@ -19,6 +19,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\RawExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Formatters\MysqlFormatter;
@@ -40,6 +41,7 @@ use function DmitryProA\PhpAdvancedQuerying\count_;
 use function DmitryProA\PhpAdvancedQuerying\func;
 use function DmitryProA\PhpAdvancedQuerying\greater;
 use function DmitryProA\PhpAdvancedQuerying\isNull;
+use function DmitryProA\PhpAdvancedQuerying\literal;
 use function DmitryProA\PhpAdvancedQuerying\plus;
 use function DmitryProA\PhpAdvancedQuerying\select;
 use function DmitryProA\PhpAdvancedQuerying\table;
@@ -163,6 +165,20 @@ class MysqlFormatterTest extends TestCase
         $expr = new WindowFunctionExpression(new FunctionExpression('row_number'), new ColumnExpression('column'));
         $sql = $this->formatter->formatExpression($expr);
         $this->assertSql('ROW_NUMBER() OVER (PARTITION BY `column`)', $sql);
+    }
+
+    public function testRawExpression()
+    {
+        $expr = new RawExpression(['BETWEEN', literal(12), 'AND', 15]);
+        $sql = $this->formatter->formatExpression($expr);
+
+        $this->assertSql('BETWEEN :v1 AND 15', $sql);
+
+        $str = "json->'value'::bool = true";
+        $expr = new RawExpression([$str]);
+        $sql = $this->formatter->formatExpression($expr);
+
+        $this->assertSql($str, $sql);
     }
 
     public function testArithmeticExpression()

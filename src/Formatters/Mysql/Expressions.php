@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DmitryProA\PhpAdvancedQuerying\Formatters\Mysql;
 
+use DmitryProA\PhpAdvancedQuerying\Expression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ArithmeticExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\CastExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\ColumnExpression;
@@ -12,6 +13,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\RawExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 
@@ -29,6 +31,7 @@ trait Expressions
         WindowFunctionExpression::class => 'formatWindowFunctionExpression',
         ArithmeticExpression::class => 'formatArithmeticExpression',
         ConditionExpression::class => 'formatConditionExpression',
+        RawExpression::class => 'formatRawExpression',
     ];
 
     protected function formatSelectExpression(SelectExpression $expr): string
@@ -145,5 +148,18 @@ trait Expressions
     protected function formatConditionExpression(ConditionExpression $expr): string
     {
         return $this->formatCondition($expr->condition);
+    }
+
+    protected function formatRawExpression(RawExpression $expr): string
+    {
+        $formattedParts = array_map(function ($part) {
+            if ($part instanceof Expression) {
+                return $this->formatExpression($part);
+            }
+
+            return strval($part);
+        }, $expr->parts);
+
+        return implode(' ', $formattedParts);
     }
 }

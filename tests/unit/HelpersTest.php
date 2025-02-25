@@ -19,6 +19,7 @@ use DmitryProA\PhpAdvancedQuerying\Expressions\CountExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\FunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\GroupConcatExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\LiteralExpression;
+use DmitryProA\PhpAdvancedQuerying\Expressions\RawExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\SelectExpression;
 use DmitryProA\PhpAdvancedQuerying\Expressions\WindowFunctionExpression;
 use DmitryProA\PhpAdvancedQuerying\FieldValue;
@@ -64,6 +65,7 @@ use function DmitryProA\PhpAdvancedQuerying\notLike;
 use function DmitryProA\PhpAdvancedQuerying\or_;
 use function DmitryProA\PhpAdvancedQuerying\over;
 use function DmitryProA\PhpAdvancedQuerying\plus;
+use function DmitryProA\PhpAdvancedQuerying\raw;
 use function DmitryProA\PhpAdvancedQuerying\select;
 use function DmitryProA\PhpAdvancedQuerying\table;
 use function DmitryProA\PhpAdvancedQuerying\true;
@@ -228,6 +230,21 @@ class HelpersTest extends TestCase
     {
         $this->expectException(InvalidTypeException::class);
         over('row_number', new stdClass());
+    }
+
+    public function testRaw()
+    {
+        $parts = ['BETWEEN', literal(15), 'AND', 30];
+        $expected = new RawExpression($parts);
+
+        $raw = raw($parts);
+        $this->assertEquals($expected, $raw);
+
+        $raw = raw(...$parts);
+        $this->assertEquals($expected, $raw);
+
+        $this->expectException(InvalidArgumentException::class);
+        raw(null);
     }
 
     public function testPlus()
